@@ -2,6 +2,7 @@
 import os, json, ocrmypdf, re, logging
 from scrapy.pipelines.files import FilesPipeline
 
+from time import sleep
 from supabase import create_client, Client
 from pypdf import PdfReader
 from langdetect import detect
@@ -169,6 +170,7 @@ class ChunkingPipeline(object):
 
                 for i, chunk in enumerate(chunks):
                     self._addChunk(url, i, chunk)
+                    sleep(1)
         
         except Exception as e:
             spider.log(f"Failed to insert item into DB: {e}")
