@@ -3,6 +3,10 @@ select vault.create_secret(
   'supabase_url'
 );
 
+select vault.create_scret(
+  'http://ollama:11434',
+  'AI_INFERNCE_API_HOST'
+);
 create function private.embed() 
 returns trigger 
 language plpgsql
