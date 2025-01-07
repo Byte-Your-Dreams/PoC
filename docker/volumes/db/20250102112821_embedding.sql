@@ -2,11 +2,7 @@ select vault.create_secret(
   'http://kong:8000',
   'supabase_url'
 );
-
-select vault.create_scret(
-  'http://ollama:11434',
-  'AI_INFERNCE_API_HOST'
-);
+CREATE EXTENSION IF NOT EXISTS vector;
 create function private.embed() 
 returns trigger 
 language plpgsql
@@ -15,7 +11,7 @@ declare
   url text;
   result int;
 begin
-  IF NEW.embedding IS NULL OR Old.Contenuto <> NEW.Contenuto THEN
+  If NEW.embedding IS NULL OR OLD.Contenuto <> NEW.Contenuto THEN
     select
       net.http_post(
         url := supabase_url() || '/functions/v1/embed',
@@ -29,8 +25,8 @@ begin
           'n_chunk', NEW.NChunk 
         )
       )
-      into result;
-  end if;
+    into result;
+  END IF;
   return null;
 end;
 $$;

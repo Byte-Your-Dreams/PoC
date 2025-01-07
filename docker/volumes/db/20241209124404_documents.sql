@@ -40,12 +40,45 @@ begin
 end;
 $$;
 
-CREATE VIEW prodotto_manuale_full WITH (security_invoker=true)
-AS
-  SELECT Prodotto.*, Prodotto_Manuale.Manuale as manuale
-  FROM Prodotto JOIN Prodotto_Manuale ON (Prodotto.ID = Prodotto_Manuale.Prodotto);
+-- This SQL script creates a function and a trigger to handle updates to storage objects.
+-- 
+-- Function: private.handle_storage_update()
+-- - Triggered after an insert on the storage.objects table.
+-- - Inserts a new record into the Manuale table with the name and storage ID from the new storage object.
+-- - Sends an HTTP POST request to a specified URL with the inserted record's ID.
+-- 
+-- Trigger: on_file_upload
+-- - Fires after an insert operation on the storage.objects table.
+-- - Executes the private.handle_storage_update() function for each inserted row.
+CREATE function private.handle_storage_update()
+returns trigger
+language plpgsql
+as $$
+declare
+  Url TEXT;
+  result INT;
+begin
+  select
+    net.http_post(
+      url := supabase_url() || '/functions/process',
+      headers := jsonb_build_object(
+        'Content-Type', 'application/json',
+        'Authorization', current_setting('request.headers')::json->>'authorization'
+      ),
+      body := jsonb_build_object(
+        'Object', storage_object_id
+      )
+    )
+  into result;
 
+  return null;
+end;
+$$;
 
+--CREATE trigger on_file_upload
+--  AFTER INSERT OR UPDATE ON Manuale
+--  FOR EACH ROW
+-- EXECUTE PROCEDURE private.handle_storage_update();
 CREATE OR REPLACE FUNCTION match_messaggi (query_embedding vector(768))
 returns TABLE (
   content TEXT, 
@@ -74,31 +107,19 @@ as $$
   LIMIT  5;
 $$;
 
-CREATE OR REPLACE FUNCTION match_manuale (query_embedding vector(768), documents text[] )
+CREATE OR REPLACE FUNCTION match_manuale (query_embedding vector(768))
 returns TABLE (
-  Manuale TEXT,
-  NChunk INT,
   content TEXT, 
   score FLOAT
 )
 language SQL
 as $$
-  SELECT Manuale, NChunk, Contenuto, 1-(embedding <-> query_embedding) as score
+  SELECT Contenuto, 1-(embedding <-> query_embedding) as score
   FROM public.Manuale_Sezione
-  WHERE 1-(embedding <=> query_embedding) > 0.58 AND Manuale = ANY(documents)
+  WHERE 1-(embedding <-> query_embedding) > 0.58
   ORDER BY score ASC
   LIMIT  5;
 $$;
 
-CREATE OR REPLACE FUNCTION get_pdf_id(pdf TEXT)
-RETURNS TEXT
-LANGUAGE plpgsql
-as $$
-BEGIN
-  RETURN (
-    SELECT Nome
-    FROM public.Manuale
-    WHERE Link = pdf
-  );
-END;
-$$;
+
+
