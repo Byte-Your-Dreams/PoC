@@ -1,6 +1,11 @@
+python-dotenv
 scrapy
 scrapyd
 scrapyd-client
 pypdf
+ocrmypdf
+supabase
 langdetect
 langchain_text_splitters
+
+
