@@ -461,18 +461,5 @@ services:
     restart: always
     entrypoint: ["/usr/bin/bash", "/entrypoint.sh"]
   
-  app:
-    build:
-      context: ../webapp
-      dockerfile: Dockerfile
-    ports:
-      - "8081:8081"
-    volumes:
-      - ../my-app:/usr/src/app
-    environment:
-      NODE_ENV: development
-      NEXT_PUBLIC_SUPABASE_URL: ${SUPABASE_PUBLIC_URL}
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${ANON_KEY}
-
 volumes:
   db-config:
