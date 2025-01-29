@@ -3,7 +3,6 @@
 #   With helpers:   docker compose -f docker-compose.yml -f ./dev/docker-compose.dev.yml up
 #   Stop:           docker compose down
 #   Destroy:        docker compose -f docker-compose.yml -f ./dev/docker-compose.dev.yml down -v --remove-orphans
-
 name: supabase
 
 services:
@@ -23,6 +22,7 @@ services:
       interval: 5s
       retries: 3
     environment:
+      OPENAI_API_KEY: 'ollama'
       STUDIO_PG_META_URL: http://meta:8080
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
@@ -40,6 +40,8 @@ services:
       # Comment to use Big Query backend for analytics
       # Uncomment to use Big Query backend for analytics
       # NEXT_ANALYTICS_BACKEND_PROVIDER: bigquery
+    networks:
+        - vimar_net
 
   kong:
     container_name: supabase-kong
@@ -65,7 +67,8 @@ services:
     volumes:
       # https://github.com/supabase/supabase/issues/12661
       - ./volumes/api/kong.yml:/home/kong/temp.yml:ro
-
+    networks:
+        - vimar_net
   auth:
     container_name: supabase-auth
     image: supabase/gotrue:v2.158.1
@@ -95,7 +98,7 @@ services:
       GOTRUE_DB_DRIVER: postgres
       GOTRUE_DB_DATABASE_URL: postgres://supabase_auth_admin:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
 
-      GOTRUE_SITE_URL: ${SITE_URL}
+      GOTRUE_SITE_URL: http://localhost:8081
       GOTRUE_URI_ALLOW_LIST: ${ADDITIONAL_REDIRECT_URLS}
       GOTRUE_DISABLE_SIGNUP: ${DISABLE_SIGNUP}
       GOTRUE_JWT_ADMIN_ROLES: service_role
@@ -140,7 +143,8 @@ services:
       # GOTRUE_HOOK_SEND_EMAIL_ENABLED: "false"
       # GOTRUE_HOOK_SEND_EMAIL_URI: "http://host.docker.internal:54321/functions/v1/email_sender"
       # GOTRUE_HOOK_SEND_EMAIL_SECRETS: "v1,whsec_VGhpcyBpcyBhbiBleGFtcGxlIG9mIGEgc2hvcnRlciBCYXNlNjQgc3RyaW5n"
-
+    networks:
+        - vimar_net
 
 
 
@@ -160,7 +164,8 @@ services:
       PGRST_APP_SETTINGS_JWT_SECRET: ${JWT_SECRET}
       PGRST_APP_SETTINGS_JWT_EXP: ${JWT_EXPIRY}
     command: "postgrest"
-
+    networks:
+        - vimar_net
   realtime:
     # This container name looks inconsistent but is correct because realtime constructs tenant id by parsing the subdomain
     container_name: realtime-dev.supabase-realtime
@@ -202,7 +207,8 @@ services:
       RLIMIT_NOFILE: "1000000"
       APP_NAME: realtime
       SEED_SELF_HOST: true
-
+    networks:
+        - vimar_net
   storage:
     container_name: supabase-storage
     image: supabase/storage-api:v1.10.1
@@ -249,7 +255,8 @@ services:
         target: /var/lib/storage
         bind:
           propagation: rshared
-
+    networks:
+        - vimar_net
   imgproxy:
     container_name: supabase-imgproxy
     image: darthsim/imgproxy:v3.8.0
@@ -265,6 +272,8 @@ services:
       IMGPROXY_ENABLE_WEBP_DETECTION: ${IMGPROXY_ENABLE_WEBP_DETECTION}
     volumes:
       - ./volumes/storage:/var/lib/storage:z
+    networks:
+        - vimar_net
   meta:
     container_name: supabase-meta
     image: supabase/postgres-meta:v0.83.2
@@ -280,12 +289,15 @@ services:
       PG_META_DB_NAME: ${POSTGRES_DB}
       PG_META_DB_USER: supabase_admin
       PG_META_DB_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+        - vimar_net
 
   functions:
     container_name: supabase-edge-functions
     image: supabase/edge-runtime:v1.58.3
     restart: unless-stopped
     environment:
+      OPENAI_API_KEY: 'ollama'
       JWT_SECRET: ${JWT_SECRET}
       SUPABASE_URL: http://kong:8000
       SUPABASE_ANON_KEY: ${ANON_KEY}
@@ -302,7 +314,8 @@ services:
       - start
       - --main-service
       - /home/deno/functions/main
-
+    networks:
+        - vimar_net
   
   # Comment out everything below this point if you are using an external Postgres database
   db:
@@ -349,17 +362,19 @@ services:
       - ./volumes/db/logs.sql:/docker-entrypoint-initdb.d/migrations/99-logs.sql:Z
       # Changes required for Pooler support
       - ./volumes/db/pooler.sql:/docker-entrypoint-initdb.d/migrations/99-pooler.sql:Z
-      - ./volumes/db/20230618024722_init.sql:/docker-entrypoint-initdb.d/migrations/20230618024722_init.sql:Z
-      - ./volumes/db/20241209123114_files.sql:/docker-entrypoint-initdb.d/migrations/20241209123114_files.sql:Z
-      - ./volumes/db/20241209124404_documents.sql:/docker-entrypoint-initdb.d/migrations/20241209124404_documents.sql:Z
-      - ./volumes/db/20250102112821_embedding.sql:/docker-entrypoint-initdb.d/migrations/20250102112821_embedding.sql:Z
       # Use named volume to persist pgsodium decryption key between restarts
+
       - db-config:/etc/postgresql-custom
       #AGGIUNTA IO
-      #- ../supabase/migrations/20230618024722_init.sql:/docker-entrypoint-initdb.d/migrations/20230618024722_init.sql:Z
-      #- ../supabase/migrations/20241209123114_files.sql:/docker-entrypoint-initdb.d/migrations/20241209123114_files.sql:Z
-      #- ../supabase/migrations/20241209124404_documents.sql:/docker-entrypoint-initdb.d/migrations/20241209124404_documents.sql:Z
-      #- ../supabase/migrations/20250102112821_embedding.sql:/docker-entrypoint-initdb.d/migrations/20250102112821_embedding.sql:Z
+      - ./volumes/db/20230618024722_init.sql:/docker-entrypoint-initdb.d/migrations/20230618024722_init.sql:Z
+      - ./volumes/db/20241209123114_documents.sql:/docker-entrypoint-initdb.d/migrations/20241209123114_documents.sql:Z
+      - ./volumes/db/20241209124404_embedding.sql:/docker-entrypoint-initdb.d/migrations/20241209124404_embedding.sql:Z
+      - ./volumes/db/20250101121214_ragFunctions.sql:/docker-entrypoint-initdb.d/migrations/20250101121214_ragFunctions.sql:Z
+      - ./volumes/db/20250102112821_chatLogic.sql:/docker-entrypoint-initdb.d/migrations/20250102112821_chatLogic.sql:Z
+      # Use named volume to persist pgsodium decryption key between restarts
+      - db-config:/etc/postgresql-custom
+    networks:
+        - vimar_net
   vector:
     container_name: supabase-vector
     image: timberio/vector:0.28.1-alpine
@@ -383,7 +398,8 @@ services:
     environment:
       LOGFLARE_API_KEY: ${LOGFLARE_API_KEY}
     command: [ "--config", "etc/vector/vector.yml" ]
-
+    networks:
+        - vimar_net
   # Update the DATABASE_URL if you are using an external Postgres database
   supavisor:
     container_name: supabase-pooler
@@ -423,7 +439,8 @@ services:
       - POOLER_POOL_MODE=transaction
     volumes:
       - ./volumes/pooler/pooler.exs:/etc/pooler/pooler.exs:ro
-
+    networks:
+        - vimar_net
   scrapy:
     container_name: scraper
     build: ../Scraper
@@ -448,6 +465,8 @@ services:
       fi &&
       tail -f /dev/null
       "
+    networks:
+        - vimar_net
   ollama:
     image: ollama/ollama:latest
     ports:
@@ -460,6 +479,11 @@ services:
     tty: true
     restart: always
     entrypoint: ["/usr/bin/bash", "/entrypoint.sh"]
-  
+    networks:
+        - vimar_net
+
+networks:
+  vimar_net:
+    external: true
 volumes:
   db-config:
