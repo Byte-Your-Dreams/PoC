@@ -201,7 +201,7 @@ class ChunkingPipeline(object):
         txt = ' '.join(split)
         txt = self._removeOtherSpecial(txt)
 
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size = 800, chunk_overlap = 100)
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size = 1000, chunk_overlap = 200)
 
         return text_splitter.split_text(txt)
         
