@@ -370,7 +370,7 @@ services:
       - ./volumes/db/20241209123114_documents.sql:/docker-entrypoint-initdb.d/migrations/20241209123114_documents.sql:Z
       - ./volumes/db/20241209124404_embedding.sql:/docker-entrypoint-initdb.d/migrations/20241209124404_embedding.sql:Z
       - ./volumes/db/20250101121214_ragFunctions.sql:/docker-entrypoint-initdb.d/migrations/20250101121214_ragFunctions.sql:Z
-      - ./volumes/db/20250102112821_chatLogic.sql:/docker-entrypoint-initdb.d/migrations/20250102112821_chatLogic.sql:Z
+      - ./volumes/db/20250102112821_chatlogic.sql:/docker-entrypoint-initdb.d/migrations/20250102112821_chatlogic.sql:Z
       # Use named volume to persist pgsodium decryption key between restarts
       - db-config:/etc/postgresql-custom
     networks:
