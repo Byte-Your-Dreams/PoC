@@ -1,0 +1,400 @@
+.mainContainer {
+  display: flex;
+  height: calc(100vh - 100px);
+  font-family: "Poppins", sans-serif;
+}
+
+/* 
+.navbar {
+  width: 30%;
+  background-color: #f8f9fa;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  border-right: 2px solid #e0e0e0;
+} */
+
+.newConversationButton {
+  margin: 15px 5px 5px 5px;
+  background-color: #ffd700;
+  color: #555;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.newConversationButton:hover {
+  background-color: #e5c200;
+}
+
+.section h2 {
+  margin-bottom: 10px;
+  color: #333;
+}
+
+/* .section ul {
+  list-style-type: none;
+  padding: 0;
+} */
+
+.conversationItem ul,
+.conversationItem ol {
+  list-style: none;
+  /* Rimuove i puntatori  */
+  padding-left: 0;
+  /* Rimuove eventuali margini/padding */
+}
+
+.conversationItem {
+  padding: 8px;
+  cursor: pointer;
+  color: #555;
+}
+
+
+.tabButtons {
+  margin-top: 20px;
+}
+
+.tabButton {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.tabButton:hover {
+  background-color: #f1f1f1;
+}
+
+.activeTab {
+  background-color: #ffd700;
+  color: #555;
+}
+
+
+.chatContainer {
+  width: 70%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.chatHeader {
+  background-color: #333;
+  color: white;
+  padding: 15px;
+  font-size: 20px;
+  text-align: center;
+}
+
+.chatMessages {
+  flex: 1;
+  padding: 20px;
+  background-color: white;
+  overflow-y: auto;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.messageBar {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    background-color: #f9f9f9;
+  }
+
+  .inputContainer {
+    display: flex;
+    align-items: center;
+  }
+
+.inputField {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  margin-right: 10px;
+  font-size: 16px;
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+.sendButton {
+  background: #ffd700;
+  color: #333;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.sendButton:hover {
+  background: #e5c200;
+}
+
+/* chat.module.css */
+.chatMessages {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+  background-color: #f9f9f9;
+}
+
+/* .message {
+  display: block; 
+  max-width: 70%; 
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  word-wrap: break-word;
+  word-break: break-word;
+  width: fit-content;
+} */
+
+.message {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.userMessageContainer {
+  display: flex;
+  justify-content: flex-end;
+  /* 使提问内容靠左 */
+  margin-bottom: 5px;
+}
+
+/* .userMessage {
+  align-self: flex-end;
+  background-color:#ffd700;
+  color:#555;
+  text-align: right;
+  margin-left: auto;
+} */
+
+/* 用户提问消息样式 */
+.userMessage {
+  background-color: #ffd700;
+  color: #555;
+  padding: 10px;
+  border-radius: 15px;
+  max-width: 80%;
+  /* 设定消息最大宽度 */
+  word-wrap: break-word;
+  font-size: 14px;
+}
+
+.botMessageContainer {
+  display: flex;
+  justify-content: flex-start;
+  /* 使回答内容靠右 */
+  margin-bottom: 5px;
+}
+
+/* .botMessage {
+  align-self: flex-start;
+  background-color:#555;
+  color:#f9f9f9;
+  text-align: left;
+  margin-right: auto;
+} */
+
+/* 机器人回答消息样式 */
+.botMessage {
+  background-color: #555;
+  color: #f9f9f9;
+  padding: 10px;
+  border-radius: 15px;
+  max-width: 80%;
+  word-wrap: break-word;
+  font-size: 14px;
+}
+
+.botMessage ul {
+  list-style: disc;
+  /* Aggiunge puntatori */
+  padding-left: 20px;
+  /* Aggiunge il margine sinistro per l'indentazione */
+}
+
+.botMessage ol {
+  list-style: decimal;
+  padding-left: 20px;
+}
+
+
+/* Sidebar Styling */
+.sidebar {
+  /* width: 30%; */
+  background-color: #f8f9fa;
+  display: flex;
+  flex-direction: column;
+  border-right: 2px solid #e0e0e0;
+  height: 100%;
+}
+
+/* Tab Navigation */
+.tabNav {
+  display: flex;
+  flex-direction: row;
+  padding: 10px 10px;
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.tabButton {
+  width: 100%;
+  text-align: center;
+  padding: 10px;
+  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  background-color: transparent;
+  color: #555;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.tabButton:hover {
+  background-color: #f1f1f1;
+}
+
+.activeTab {
+  background-color: #ffd700;
+  color: #555;
+}
+
+/* Conversation List */
+.conversationList {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 10px;
+}
+
+.conversationItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  cursor: pointer;
+  color: #555;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.conversationItem:hover {
+  background-color: #f1f1f1;
+}
+
+.activeConversation {
+  background-color: #ffd700;
+  color: #555;
+  font-weight: bold;
+}
+.activeConversation:hover {
+  background-color: #ffd700;
+}
+
+.deleteButton {
+  background-color: #f00;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.conversationItem .btnDelete {
+  border: none;
+  color: #555;
+  padding: 0;
+  margin-left: 10px;
+  width: 20px;
+  height: 25px;
+  cursor: pointer;
+  border-radius: 20%;
+  background-color: transparent;
+}
+
+.conversationItem .btnDelete:hover {
+  color: #F8F9FA;
+  background-color: #ff0000;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.messageBar {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  background-color: #f9f9f9;
+}
+
+.infoContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.charCount {
+  font-size: 14px;
+  color: #555;
+  text-align: right; /* Posiziona il testo a destra */
+}
+
+.errorMessage {
+  color: red;
+  font-size: 14px;
+  text-align: right; /* Posiziona il testo a destra */
+}
+
+/* Feedback Styling */
+.feedbackContainer {
+  display: flex;
+  align-items: center;
+  margin-top: 5px;
+  justify-content: space-between;
+}
+
+.messageTime {
+  font-size: 12px;
+  color: #999;
+}
+
+.feedbackButtons{
+  display: flex;
+  flex-direction: row;
+}
+
+.feedbackButton {
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: 5px;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.feedbackButton .feedbackIcon {
+  color: #000;
+  font-size: 15px;
+}
+
+.feedbackButton:hover .thumbsUp, .feedbackButton.selected .thumbsUp {
+  color: blue;
+}
+
+.feedbackButton:hover .thumbsDown, .feedbackButton.selected .thumbsDown {
+  color: red;
+}
