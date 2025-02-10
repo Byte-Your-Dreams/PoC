@@ -2,6 +2,7 @@
 import os, json, ocrmypdf, re, logging
 from scrapy.pipelines.files import FilesPipeline
 
+from time import sleep
 from supabase import create_client, Client
 from pypdf import PdfReader
 from langdetect import detect
@@ -17,10 +18,13 @@ class CustomFilePipeline(FilesPipeline):
 
 class DBPipeline(object):
     def open_spider(self, spider):
-        url: str = os.getenv("NEXT_PUBLIC_SUPABASE_URL")
-        key: str = os.getenv("NEXT_PUBLIC_SUPABASE_ANON_KEY")
-        if not url or not key:
-            raise ValueError("SUPABASE_URL and SUPABASE_KEY environment variables must be set")
+        url: str = os.getenv("SUPABASE_URL")
+        key: str = os.getenv("SERVICE_ROLE_KEY")
+
+        # Stampa le variabili di ambiente per la verifica
+        print(f"SUPABASE_PUBLIC_URL: {url}")
+        print(f"SERVICE_ROLE_KEY: {key}")
+
         self.supabase: Client = create_client(url, key)
         
     def close_spider(self, spider): 
@@ -140,8 +144,8 @@ class DBPipeline(object):
 
 class ChunkingPipeline(object):
     def open_spider(self, spider):
-        url: str = os.environ.get("NEXT_PUBLIC_SUPABASE_URL")
-        key: str = os.environ.get("NEXT_PUBLIC_SUPABASE_ANON_KEY")
+        url: str = os.getenv("SUPABASE_URL")
+        key: str = os.getenv("SERVICE_ROLE_KEY")
         if not url or not key:
             raise ValueError("SUPABASE_URL and SUPABASE_KEY environment variables must be set")
         self.supabase: Client = create_client(url, key)
@@ -169,6 +173,7 @@ class ChunkingPipeline(object):
 
                 for i, chunk in enumerate(chunks):
                     self._addChunk(url, i, chunk)
+                    sleep(1)
         
         except Exception as e:
             spider.log(f"Failed to insert item into DB: {e}")
@@ -196,7 +201,7 @@ class ChunkingPipeline(object):
         txt = ' '.join(split)
         txt = self._removeOtherSpecial(txt)
 
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size = 800, chunk_overlap = 100)
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size = 1800, chunk_overlap = 250)
 
         return text_splitter.split_text(txt)
         

@@ -1,0 +1,26 @@
+services:
+  next-app:
+    container_name: next-app
+    build:
+      context: ../app
+
+    # Set environment variables directly in the compose file
+    environment:
+      ENV_VARIABLE: ${ENV_VARIABLE}
+      NEXT_PUBLIC_ENV_VARIABLE: ${NEXT_PUBLIC_ENV_VARIABLE}
+      NEXT_PUBLIC_SUPABASE_URL: http://kong:8000
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${ANON_KEY}
+      NEXT_PUBLIC_SUPABASE_URL_PORT: 8000
+      CHOKIDAR_USEPOLLING: true
+    volumes:
+      - ../app/src:/app/src
+      - ../app/public:/app/public
+    restart: always
+    ports:
+      - 8081:8081
+    networks:
+      - vimar_net
+
+networks:
+  vimar_net:
+    external: true
