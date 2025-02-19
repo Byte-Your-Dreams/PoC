@@ -32,42 +32,6 @@ create trigger add_question
   for each row
   execute procedure private.embed_message();
 
--- function to generate the response
--- create function private.generate_response() 
--- returns trigger 
--- language plpgsql
--- as $$
--- declare
---   url text;
---   result int;
--- begin
---   IF NEW.domanda_embedding IS NOT NULL THEN
---     select
---       net.http_post(
---         url := supabase_url() || '/functions/v1/chat',
---         headers := jsonb_build_object(
---             'Content-Type', 'application/json',
---             'Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ewogICJyb2xlIjogImFub24iLAogICJpc3MiOiAic3VwYWJhc2UiLAogICJpYXQiOiAxNzM0NDc2NDAwLAogICJleHAiOiAxODkyMjQyODAwCn0.sAKa6ugHybSJQzPFpNyeglJdRBxHQ8l-A7Sj6fXH5X8'
---         ),
---         body := jsonb_build_object(
---             'query', NEW.domanda,
---             'query_embedding', NEW.domanda_embedding,
---             'id', NEW.id,
---             'chat_id', NEW.chat
---         )
---       )
---     into result;
---   END IF;
---   return null;
--- end;
--- $$;
-
--- trigger to generate the response
--- create trigger generate_response
---   after update on public.Messaggio
---   for each row
---   execute procedure private.generate_response(); 
-
 
 CREATE OR REPLACE FUNCTION public.getlastmessages(chat_id uuid)
 RETURNS jsonb 
